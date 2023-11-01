@@ -1,0 +1,123 @@
+:root{
+    --bg-color: #FFFFFF;
+    --text-color: #000000;
+    --text-secondary-color: #C3C3C3;
+    --border-color: #EAEAEA;
+
+    --picker-default-color: #8EB8E5;
+}
+
+body{
+    background-color: var(--bg-color);
+    font-family: "proxima-soft", "Proxima Soft", "Proxima Nova Soft", Helvetica, Arial, sans-serif;
+}
+
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance:textfield; /* Firefox */
+}
+
+#main_container{
+    padding: 20px;
+}
+
+.color_picker_wrapper{
+    max-width: 100%;
+    max-height: 80svh;
+    aspect-ratio: 1/1;
+    overflow: hidden;
+
+    margin: 0;
+
+    background-color: var(--picker-default-color);
+    cursor: pointer;
+
+    border-radius: 3px;
+}
+
+#color_picker{
+    width: 100%;
+    height: 100%;
+
+    margin: 0;
+    padding: 0;
+
+    /* make it hidden, but we can click on it */
+    opacity: 0;
+    cursor: pointer;
+
+    /*remove all default decoration*/
+    outline: none;
+    border: none;
+    box-shadow: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: transparent;
+}
+
+.color_separator{
+    height: 0;
+    margin: 10px 0;
+}
+
+.color_inputs{
+    padding: 1.5em;
+    border-radius: 3px;
+    border: 1px solid var(--border-color);
+}
+
+.color_input{
+    position: relative;
+
+    font-style: normal;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+.color_input label{
+    width: 30px;
+    padding-right: 1.125em;
+    font-weight: 600;
+    color: #c3c3c3;
+
+    box-sizing: border-box;
+}
+
+.color_input input:not([type=range]){
+    width: 80px;
+    margin: 0;
+    appearance: none;
+
+    font-weight: 700;
+    padding: 0.0625rem 0.75em 0.0625em;
+    border-radius: 3px;
+    border: 1px solid var(--bg-color);
+    background-color: transparent;
+    outline: none;
+    line-height: normal;
+
+    transition: all 0.375s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.color_input input:not([type=range]):focus {
+    outline: none;
+    border: 1px solid var(--border-color);
+}
+
+.color_input input[type=range]{
+    position: relative;
+    top: 7px;
+
+    max-width: 200px;
+}
+
+.color_warning{
+    margin-top: 1rem;
+    margin-bottom: 0;
+}

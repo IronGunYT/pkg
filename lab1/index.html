@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Color picker</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="styles/fonts.css">
+    <link rel="stylesheet" href="styles/style.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jscolor/2.5.1/jscolor.min.js"></script>
+</head>
+<body data-bs-no-jquery>
+    <div class="container" id="main_container">
+        <div class="row">
+            <h1>Color picker</h1>
+        </div>
+        <div class="row app_row">
+            <!-- left column - color displayer/picker and palette -->
+            <div class="col-12 col-sm-6 color_view">
+                <div class="row color_picker_wrapper" id="color_picker_display">
+                    <input type="color" id="color_picker" onchange="click_color();">
+                </div>
+                <i>*click to select color*</i>
+            </div>
+            <!-- middle column - set and display colors in RGB/CMYK/HSL -->
+            <div class="col-12 col-sm-6">
+                <div class="color_inputs">
+                    <div class="color_input">
+                        <label for="hex_input">#</label>
+                        <input type="text" id="hex_input" value="8EB8E5" maxlength="6" oninput="hex_change();">
+                    </div>
+                    <div class="color_separator"></div>
+                    <div class="color_input">
+                        <label for="rgb_r_input">R</label>
+                        <input type="number" id="rgb_r_input" value="142" min="0" max="255" oninput="rgb_r_change();">
+                        <input type="range" class="form-range" id="rgb_r_range" value="142" min="0" max="255" oninput="rgb_r_range_change();">
+                    </div>
+                    <div class="color_input">
+                        <label for="rgb_g_input">G</label>
+                        <input type="number" id="rgb_g_input" value="184" min="0" max="255" oninput="rgb_g_change();">
+                        <input type="range" class="form-range" id="rgb_g_range" value="184" min="0" max="255" oninput="rgb_g_range_change();">
+                    </div>
+                    <div class="color_input">
+                        <label for="rgb_b_input">B</label>
+                        <input type="number" id="rgb_b_input" value="229" min="0" max="255" oninput="rgb_b_change();">
+                        <input type="range" class="form-range" id="rgb_b_range" value="229" min="0" max="255" oninput="rgb_b_range_change();">
+                    </div>
+                    <div class="color_separator"></div>
+                    <div class="color_input">
+                        <label for="cmyk_c_input">C</label>
+                        <input type="number" id="cmyk_c_input" value="38" min="0" max="100" oninput="cmyk_c_change();">
+                        <input type="range" class="form-range" id="cmyk_c_range" value="38" min="0" max="100" oninput="cmyk_c_range_change();">
+                    </div>
+                    <div class="color_input">
+                        <label for="cmyk_m_input">M</label>
+                        <input type="number" id="cmyk_m_input" value="20" min="0" max="100" oninput="cmyk_m_change();">
+                        <input type="range" class="form-range" id="cmyk_m_range" value="20" min="0" max="100" oninput="cmyk_m_range_change();">
+                    </div>
+                    <div class="color_input">
+                        <label for="cmyk_y_input">Y</label>
+                        <input type="number" id="cmyk_y_input" value="0" min="0" max="100" oninput="cmyk_y_change();">
+                        <input type="range" class="form-range" id="cmyk_y_range" value="0" min="0" max="100" oninput="cmyk_y_range_change();">
+                    </div>
+                    <div class="color_input">
+                        <label for="cmyk_k_input">K</label>
+                        <input type="number" id="cmyk_k_input" value="10" min="0" max="100" oninput="cmyk_k_change();">
+                        <input type="range" class="form-range" id="cmyk_k_range" value="10" min="0" max="100" oninput="cmyk_k_range_change();">
+                    </div>
+                    <div class="color_separator"></div>
+                    <div class="color_input">
+                        <label for="hsl_h_input">H</label>
+                        <input type="number" id="hsl_h_input" value="211" min="0" max="359" oninput="hsl_h_change();">
+                        <input type="range" class="form-range" id="hsl_h_range" value="11" min="0" max="359" oninput="hsl_h_range_change();">
+                    </div>
+                    <div class="color_input">
+                        <label for="hsl_s_input">S</label>
+                        <input type="number" id="hsl_s_input" value="38" min="0" max="100" oninput="hsl_s_change();">
+                        <input type="range" class="form-range" id="hsl_s_range" value="38" min="0" max="100" oninput="hsl_s_range_change();">
+                    </div>
+                    <div class="color_input">
+                        <label for="hsl_l_input">L</label>
+                        <input type="number" id="hsl_l_input" value="73" min="0" max="100" oninput="hsl_l_change();">
+                        <input type="range" class="form-range" id="hsl_l_range" value="73" min="0" max="100" oninput="hsl_l_range_change();">
+                    </div>
+                    <div class="color_separator"></div>
+                    <div class="color_input">
+                        <label for="hsl_h_input">H</label>
+                        <input type="number" id="hsv_h_input" value="211" min="0" max="359" oninput="hsv_h_change();">
+                        <input type="range" class="form-range" id="hsv_h_range" value="211" min="0" max="359" oninput="hsv_h_range_change();">
+                    </div>
+                    <div class="color_input">
+                        <label for="hsl_s_input">S</label>
+                        <input type="number" id="hsv_s_input" value="38" min="0" max="100" oninput="hsv_s_change();">
+                        <input type="range" class="form-range" id="hsv_s_range" value="38" min="0" max="100" oninput="hsv_s_range_change();">
+                    </div>
+                    <div class="color_input">
+                        <label for="hsl_l_input">V</label>
+                        <input type="number" id="hsv_v_input" value="90" min="0" max="100" oninput="hsv_v_change();">
+                        <input type="range" class="form-range" id="hsv_v_range" value="90" min="0" max="100" oninput="hsv_v_range_change();">
+                    </div>
+                    <div class="color_separator"></div>
+                    <div class="color_input">
+                        <label for="hsl_h_input">X</label>
+                        <input type="number" id="xyz_x_input" value="41" min="0" max="100" oninput="xyz_x_change();">
+                        <input type="range" class="form-range" id="xyz_x_range" value="41" min="0" max="100" oninput="xyz_x_range_change();">
+                    </div>
+                    <div class="color_input">
+                        <label for="hsl_s_input">Y</label>
+                        <input type="number" id="xyz_y_input" value="45" min="0" max="100" oninput="xyz_y_change();">
+                        <input type="range" class="form-range" id="xyz_y_range" value="45" min="0" max="100" oninput="xyz_y_range_change();">
+                    </div>
+                    <div class="color_input">
+                        <label for="hsl_l_input">Z</label>
+                        <input type="number" id="xyz_z_input" value="61" min="0" max="100" oninput="xyz_z_change();">
+                        <input type="range" class="form-range" id="xyz_z_range" value="61" min="0" max="100" oninput="xyz_z_range_change();">
+                    </div>
+                    <div class="color_separator"></div>
+                    <div class="color_input">
+                        <label for="lab_l_input">L</label>
+                        <input type="number" id="lab_l_input" value="73" min="0" max="100" oninput="lab_l_change();">
+                        <input type="range" class="form-range" id="lab_l_range" value="73" min="0" max="100" oninput="lab_l_range_change();">
+                    </div>
+                    <div class="color_input">
+                        <label for="lab_a_input">A</label>
+                        <input type="number" id="lab_a_input" value="0" min="-128" max="127" oninput="lab_a_change();">
+                        <input type="range" class="form-range" id="lab_a_range" value="0" min="-128" max="127" oninput="lab_a_range_change();">
+                    </div>
+                    <div class="color_input">
+                        <label for="lab_b_input">B</label>
+                        <input type="number" id="lab_b_input" value="0" min="-128" max="127" oninput="lab_b_change();">
+                        <input type="range" class="form-range" id="lab_b_range" value="0" min="-128" max="127" oninput="lab_b_range_change();">
+                    </div>
+                    <p class="color_warning">Warning: non RGB values are approximate and may not be accurate.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="scripts/main.js"></script>
+</body>
+</html>
