@@ -12,5 +12,5 @@
 * Filename - имя файла
 * Size - ширина и высота(в пикселях)
 * Resolution - разрешение(dpi) - ширина и высота
-* Depth - глубина цвета
+* Depth - глубина цвета - описание тут https://pillow.readthedocs.io/en/latest/handbook/concepts.html#modes
 * Compression - сжатие
