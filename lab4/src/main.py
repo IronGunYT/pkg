@@ -2,6 +2,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.messagebox import showerror
 import re
+import time
 
 """
 Написать приложение,иллюстрирующее работу базовых алгоритмов растеризации отрезков и кривых:
@@ -239,6 +240,8 @@ class UiApp:
         start_dots = self.get_dots()
         if start_dots is None:
             return
+
+        start_time = time.time()
         x1, y1, x2, y2 = start_dots
         dx = x2 - x1
         dy = y2 - y1
@@ -251,6 +254,9 @@ class UiApp:
             self.dots.append((round(x), round(y)))
             x += x_inc
             y += y_inc
+        end_time = time.time()
+        print(f'Пошаговый: {end_time-start_time:.8f}s')
+
         # normalize dots
         self.dots = list(set(self.dots))
         self.update_all()
@@ -262,6 +268,8 @@ class UiApp:
         start_dots = self.get_dots()
         if start_dots is None:
             return
+
+        start_time = time.time()
         x1, y1, x2, y2 = start_dots
         dx = x2 - x1
         dy = y2 - y1
@@ -274,6 +282,9 @@ class UiApp:
             self.dots.append((round(x), round(y)))
             x += x_inc
             y += y_inc
+        end_time = time.time()
+        print(f'DDA: {end_time - start_time:.8f}s')
+
         self.update_all()
 
     def build_bres(self):
@@ -282,6 +293,8 @@ class UiApp:
         start_dots = self.get_dots()
         if start_dots is None:
             return
+
+        start_time = time.time()
         x1, y1, x2, y2 = start_dots
         dx = x2 - x1
         dy = y2 - y1
@@ -321,6 +334,9 @@ class UiApp:
                     x += x_inc
                 y += y_inc
                 self.dots.append((x, y))
+        end_time = time.time()
+        print(f'Брезенхема: {end_time - start_time:.8f}s')
+
         self.update_all()
 
     # алгоритм Брезенхема (окружность радиуса x2 со смещением центра в точку (x1, y1))
@@ -329,6 +345,8 @@ class UiApp:
         start_dots = self.get_dots(circle=True)
         if start_dots is None:
             return
+
+        start_time = time.time()
         x1, y1, x2, y2 = start_dots
         if x2 <= 0:
             self.show_alert()
@@ -350,6 +368,9 @@ class UiApp:
         self.dots += [(x, -y) for x, y in self.dots]
         self.dots += [(-x, -y) for x, y in self.dots]
         self.dots = [(x1 + x, y1 + y) for x, y in self.dots]
+        end_time = time.time()
+        print(f'Брезенхема (окружность): {end_time - start_time:.8f}s')
+
         self.update_all()
 
 
