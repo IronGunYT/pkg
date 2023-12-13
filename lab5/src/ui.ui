@@ -34,12 +34,11 @@
           </object>
         </child>
         <child>
-          <object class="ttk.Entry" id="coord_x1" named="True">
-            <property name="validate">all</property>
-            <property name="validatecommand" type="command" cbtype="entry_validate" args="%P">check_number</property>
+          <object class="ttk.Spinbox" id="coord_x1" named="True">
+            <property name="command" type="command" cbtype="simple">update_all</property>
+            <property name="from_">-50</property>
+            <property name="to">50</property>
             <layout manager="pack">
-              <property name="fill">x</property>
-              <property name="pady">2</property>
               <property name="side">top</property>
             </layout>
           </object>
@@ -53,12 +52,11 @@
           </object>
         </child>
         <child>
-          <object class="ttk.Entry" id="coord_y1" named="True">
-            <property name="validate">all</property>
-            <property name="validatecommand" type="command" cbtype="entry_validate" args="%P">check_number</property>
+          <object class="ttk.Spinbox" id="coord_y1" named="True">
+            <property name="command" type="command" cbtype="simple">update_all</property>
+            <property name="from_">-50</property>
+            <property name="to">50</property>
             <layout manager="pack">
-              <property name="fill">x</property>
-              <property name="pady">2</property>
               <property name="side">top</property>
             </layout>
           </object>
@@ -72,12 +70,11 @@
           </object>
         </child>
         <child>
-          <object class="ttk.Entry" id="coord_x2" named="True">
-            <property name="validate">all</property>
-            <property name="validatecommand" type="command" cbtype="entry_validate" args="%P">check_number</property>
+          <object class="ttk.Spinbox" id="coord_x2" named="True">
+            <property name="command" type="command" cbtype="simple">update_all</property>
+            <property name="from_">-50</property>
+            <property name="to">50</property>
             <layout manager="pack">
-              <property name="fill">x</property>
-              <property name="pady">2</property>
               <property name="side">top</property>
             </layout>
           </object>
@@ -91,12 +88,11 @@
           </object>
         </child>
         <child>
-          <object class="ttk.Entry" id="coord_y2" named="True">
-            <property name="validate">all</property>
-            <property name="validatecommand" type="command" cbtype="entry_validate" args="%P">check_number</property>
+          <object class="ttk.Spinbox" id="coord_y2" named="True">
+            <property name="command" type="command" cbtype="simple">update_all</property>
+            <property name="from_">-50</property>
+            <property name="to">50</property>
             <layout manager="pack">
-              <property name="fill">x</property>
-              <property name="pady">2</property>
               <property name="side">top</property>
             </layout>
           </object>

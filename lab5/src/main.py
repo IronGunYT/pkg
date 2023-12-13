@@ -1,3 +1,4 @@
+import copy
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import filedialog
@@ -7,6 +8,12 @@ import time
 
 
 DEFAULT_FONT = ("Purisa", 8)
+
+INSIDE = 0  # 0000
+LEFT = 1  # 0001
+RIGHT = 2  # 0010
+BOTTOM = 4  # 0100
+TOP = 8  # 1000
 
 
 def round(x):
@@ -36,35 +43,31 @@ class UiApp:
         label1 = ttk.Label(frame3)
         label1.configure(text='x1')
         label1.pack(side="top")
-        self.coord_x1 = ttk.Entry(frame3)
-        self.coord_x1.configure(validate="all")
-        self.coord_x1.pack(fill="x", pady=2, side="top")
-        _validatecmd = (self.coord_x1.register(self.check_number), "%P")
-        self.coord_x1.configure(validatecommand=_validatecmd)
+        self.coord_x1 = ttk.Spinbox(frame3)
+        self.coord_x1.configure(from_=-50, to=50)
+        self.coord_x1.pack(side="top")
+        self.coord_x1.configure(command=self.update_all)
         label2 = ttk.Label(frame3)
         label2.configure(text='y1')
         label2.pack(side="top")
-        self.coord_y1 = ttk.Entry(frame3)
-        self.coord_y1.configure(validate="all")
-        self.coord_y1.pack(fill="x", pady=2, side="top")
-        _validatecmd = (self.coord_y1.register(self.check_number), "%P")
-        self.coord_y1.configure(validatecommand=_validatecmd)
+        self.coord_y1 = ttk.Spinbox(frame3)
+        self.coord_y1.configure(from_=-50, to=50)
+        self.coord_y1.pack(side="top")
+        self.coord_y1.configure(command=self.update_all)
         label3 = ttk.Label(frame3)
         label3.configure(text='x2')
         label3.pack(side="top")
-        self.coord_x2 = ttk.Entry(frame3)
-        self.coord_x2.configure(validate="all")
-        self.coord_x2.pack(fill="x", pady=2, side="top")
-        _validatecmd = (self.coord_x2.register(self.check_number), "%P")
-        self.coord_x2.configure(validatecommand=_validatecmd)
+        self.coord_x2 = ttk.Spinbox(frame3)
+        self.coord_x2.configure(from_=-50, to=50)
+        self.coord_x2.pack(side="top")
+        self.coord_x2.configure(command=self.update_all)
         label4 = ttk.Label(frame3)
         label4.configure(text='y2')
         label4.pack(side="top")
-        self.coord_y2 = ttk.Entry(frame3)
-        self.coord_y2.configure(validate="all")
-        self.coord_y2.pack(fill="x", pady=2, side="top")
-        _validatecmd = (self.coord_y2.register(self.check_number), "%P")
-        self.coord_y2.configure(validatecommand=_validatecmd)
+        self.coord_y2 = ttk.Spinbox(frame3)
+        self.coord_y2.configure(from_=-50, to=50)
+        self.coord_y2.pack(side="top")
+        self.coord_y2.configure(command=self.update_all)
         separator3 = ttk.Separator(frame3)
         separator3.configure(orient="horizontal")
         separator3.pack(pady=5, side="top")
@@ -149,15 +152,18 @@ class UiApp:
                 if n < 0:
                     raise Exception('n must be greater that zero')
                 for _ in range(n):
-                    x1, y1, x2, y2 = (float(i) for i in f.readline().strip())
+                    x1, y1, x2, y2 = (float(i) for i in f.readline().strip().split())
                     self.raw_segments.append([x1, y1, x2, y2])
                 # читаем многоугольник
                 n = int(f.readline().strip())
                 if n < 0:
                     raise Exception('n must be greater that zero')
                 for _ in range(n):
-                    x, y = (float(i) for i in f.readline().strip())
+                    x, y = (float(i) for i in f.readline().strip().split())
                     self.polygon.append([x, y])
+                if len(self.polygon) < 3:
+                    print('Bad polygon: need at least 3 points')
+                    self.polygon = []
         except Exception as e:
             showerror('Ошибка', f'Ошибка чтения файла: {e}')
         self.update_all()
@@ -265,7 +271,7 @@ class UiApp:
     def update_polygons(self):
         for polygon, func in (
                 (self.polygon, self.draw_raw_line),
-                (self.cutted_polygon, self.draw_cutted_line),
+                # (self.cutted_polygon, self.draw_cutted_line),
         ):
             if not polygon:
                 continue
@@ -277,16 +283,37 @@ class UiApp:
                 c_y = y
             func(c_x, c_y, polygon[0][0], polygon[0][1])
 
+    def draw_window(self):
+        window_dots = self.get_dots()
+        if window_dots is None:
+            return
+        x1, y1, x2, y2 = window_dots
+        x1, y1, _, _ = self.get_real_coords(x1, y1)
+        x2, y2, _, _ = self.get_real_coords(x2, y2)
+        self.canvas.create_rectangle(x1, y1, x2, y2, outline="blue", width=4)
+
     def update_all(self, event=None):
+        self.cutted_segments = []
         for segm in self.raw_segments:
-            self.cut_liang_barsky(*segm)
+            self.process_cut_liang_barsky(*segm)
+
+        start_time = time.time()
+        for i in range(len(self.polygon)):
+            x1, y1 = self.polygon[i][0], self.polygon[i][1]
+            x2, y2 = self.polygon[(i+1)%len(self.polygon)][0], self.polygon[(i+1)%len(self.polygon)][1]
+            r = self.process_cut_line(x1, y1, x2, y2)
+            if r is not None:
+                self.cutted_segments.append(r)
+        end_time = time.time()
+        print(f'processed polygon in {end_time - start_time:.8f}s')
         self.canvas.delete("all")
         self.update_scale(event)
         self.draw_grid()
         self.draw_axes()
         self.update_dots()
-        self.update_segments()
+        self.draw_window()
         self.update_polygons()
+        self.update_segments()
     # endregion
 
     def get_dots(self):
@@ -302,18 +329,18 @@ class UiApp:
             self.show_alert()
             return None
 
-    def cut_liang_barsky(self, s_x1, s_y1, s_x2, s_y2):
-        self.dots = []
-        start_dots = self.get_dots()
-        if start_dots is None:
+    def process_cut_liang_barsky(self, s_x1, s_y1, s_x2, s_y2):
+        window_dots = self.get_dots()
+        if window_dots is None:
             return
 
         start_time = time.time()
-        x1, y1, x2, y2 = start_dots  # отсекающее окно
-        dx = x2 - x1
-        dy = y2 - y1
+        x1, y1, x2, y2 = window_dots  # отсекающее окно
+        x1, y1, x2, y2 = min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2)
+        dx = s_x2 - s_x1
+        dy = s_y2 - s_y1
         p = [-dx, dx, -dy, dy]
-        q = [x1 - s_x1, s_x2 - x1, y1 - s_y1, s_y2 - y1]
+        q = [s_x1 - x1, x2 - s_x1, s_y1 - y1, y2 - s_y1]
         u1 = 0
         u2 = 1
         for i in range(4):
@@ -321,18 +348,103 @@ class UiApp:
                 if q[i] < 0:
                     return
             else:
-                u = q[i] / p[i]
+                t = q[i] / p[i]
                 if p[i] < 0:
-                    u1 = max(u1, u)
+                    u1 = max(u1, t)
                 else:
-                    u2 = min(u2, u)
+                    u2 = min(u2, t)
         if u1 > u2:
             return
-        x1 = x1 + u1 * dx
-        y1 = y1 + u1 * dy
-        x2 = x1 + u2 * dx
-        y2 = y1 + u2 * dy
+        x1 = s_x1 + u1 * dx
+        y1 = s_y1 + u1 * dy
+        x2 = s_x1 + u2 * dx
+        y2 = s_y1 + u2 * dy
+        end_time = time.time()
+        print(f'processed line using process_cut_liang_barsky in {end_time-start_time:.8f}s')
+
         self.cutted_segments.append([x1, y1, x2, y2])
+
+    def _get_code(self, x, y, x_min, y_min, x_max, y_max):
+        code = INSIDE
+        if x < x_min:  # to the left of rectangle
+            code |= LEFT
+        elif x > x_max:  # to the right of rectangle
+            code |= RIGHT
+        if y < y_min:  # below the rectangle
+            code |= BOTTOM
+        elif y > y_max:  # above the rectangle
+            code |= TOP
+        return code
+
+    def process_cut_line(self, x1, y1, x2, y2):
+        # алгоритм Сазерленда-Ходгмана
+        window_dots = self.get_dots()
+        if window_dots is None:
+            return
+
+        x_min, y_min, x_max, y_max = window_dots
+        x_min, y_min, x_max, y_max = min(x_min, x_max), min(y_min, y_max), max(x_min, x_max), max(y_min, y_max)
+        code1 = self._get_code(x1, y1, x_min, y_min, x_max, y_max)
+        code2 = self._get_code(x2, y2, x_min, y_min, x_max, y_max)
+        accept = False
+
+        while True:
+            # If both endpoints lie within rectangle
+            if code1 == 0 and code2 == 0:
+                accept = True
+                break
+
+            # If both endpoints are outside rectangle
+            elif (code1 & code2) != 0:
+                break
+            # Some segment lies within the rectangle
+            else:
+                # Line needs clipping
+                # At least one of the points is outside,
+                # select it
+                x = 1.0
+                y = 1.0
+                if code1 != 0:
+                    code_out = code1
+                else:
+                    code_out = code2
+
+                # Find intersection point
+                # using formulas y = y1 + slope * (x - x1),
+                # x = x1 + (1 / slope) * (y - y1)
+                if code_out & TOP:
+                    # Point is above the clip rectangle
+                    x = x1 + (x2 - x1) * (y_max - y1) / (y2 - y1)
+                    y = y_max
+                elif code_out & BOTTOM:
+                    # Point is below the clip rectangle
+                    x = x1 + (x2 - x1) * (y_min - y1) / (y2 - y1)
+                    y = y_min
+                elif code_out & RIGHT:
+                    # Point is to the right of the clip rectangle
+                    y = y1 + (y2 - y1) * (x_max - x1) / (x2 - x1)
+                    x = x_max
+                elif code_out & LEFT:
+                    # Point is to the left of the clip rectangle
+                    y = y1 + (y2 - y1) * (x_min - x1) / (x2 - x1)
+                    x = x_min
+
+                # Now intersection point (x, y) is found
+                # We replace point outside clipping rectangle
+                # by intersection point
+                if code_out == code1:
+                    x1 = x
+                    y1 = y
+                    code1 = self._get_code(x1, y1, x_min, y_min, x_max, y_max)
+                else:
+                    x2 = x
+                    y2 = y
+                    code2 = self._get_code(x2, y2, x_min, y_min, x_max, y_max)
+
+        if accept:
+            return x1, y1, x2, y2
+        else:
+            return None
 
 if __name__ == "__main__":
     root = tk.Tk()
